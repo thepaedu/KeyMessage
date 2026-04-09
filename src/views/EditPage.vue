@@ -1,18 +1,13 @@
 <template>
-  <div class="p-6">
-    <h1>Nachricht bearbeiten</h1>
+  <div class="message-editor-container">
+    <h3>Nachricht bearbeiten</h3>
 
-    <textarea v-model="message" rows="5" style="width:100%" />
-
-    <div style="margin-top:10px">
-      <button @click="save">Speichern</button>
-      <router-link to="/">
-        <button>Zurück</button>
-      </router-link>
+    <div class="text-area-container">
+      <textarea v-model="message" rows="5" style="width:100%" />
     </div>
   </div>
 
-  <div style="margin-top:20px">
+  <div class="message-editor-container">
     <h3>Bilder hinzufügen</h3>
 
     <p>Maximal 3 Bilder möglich ({{ images.length }}/3)</p>
@@ -37,6 +32,14 @@
       </div>
     </div>
   </div>
+
+  <div class="controlls-container">
+    <button @click="save">Speichern</button>
+    <router-link to="/">
+      <button>Zurück</button>
+    </router-link>
+  </div>
+
 </template>
 
 <script>
@@ -98,6 +101,8 @@ export default {
   gap: 10px;
   margin-top: 10px;
   flex-wrap: wrap;
+  margin-left: 15%;
+  margin-right: 15%;
 }
 
 .preview-img img {
@@ -125,4 +130,16 @@ export default {
   width: 22px;
   height: 22px;
 }
+
+.text-area-container {
+  margin-left: 15%;
+  margin-right: 15%;
+}
+
+.controlls-container {
+  margin-top: 20px;
+  border: 1px solid var(--border);
+  padding: 10px;
+}
+
 </style>
