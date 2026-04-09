@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import EnvelopePage from '../views/EnvelopePage.vue'
 import EditPage from '../views/EditPage.vue'
 
@@ -8,6 +8,6 @@ const routes = [
 ]
 
 export default createRouter({
-  history: createWebHistory('/KeyMessage/'),
+  history: createWebHashHistory('/KeyMessage/'),
   routes
 })
