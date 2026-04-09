@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <h1>Message</h1>
+    <h1 class="title">Message</h1>
 
     <div class="envelope" @click="toggleOpen" :class="{ open: isOpen }">
 
@@ -57,6 +57,10 @@ export default {
 </script>
 
 <style>
+.title {
+  color:  #eccba0;
+}
+
 .page {
   text-align: center;
   padding: 40px;
@@ -205,6 +209,41 @@ export default {
   100% {
     transform: translateY(0) scale(1);
     opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: 10px;
+  }
+
+  .envelope {
+    margin: 20px auto;
+    margin-top: 40%;
+  }
+
+  .letter {
+    padding: 10px;
+  }
+
+  .photo {
+    width: 70px;
+    height: 90px;
+  }
+
+  .photo:nth-child(1) {
+    left: 5%;
+    top: 110%;
+  }
+
+  .photo:nth-child(2) {
+    left: 35%;
+    top: 105%;
+  }
+
+  .photo:nth-child(3) {
+    left: 65%;
+    top: 110%;
   }
 }
 </style>
