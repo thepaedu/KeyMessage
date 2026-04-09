@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <h1>💌 Romantisches Couvert</h1>
+    <h1>Message</h1>
 
     <div class="envelope" @click="toggleOpen" :class="{ open: isOpen }">
 
@@ -8,6 +8,17 @@
 
       <div class="letter" v-if="isOpen">
         <p>{{ message }}</p>
+      </div>
+
+      <div class="photos" v-if="isOpen">
+        <div 
+          v-for="(photo, index) in finalPhotos" 
+          :key="index" 
+          class="photo"
+          :style="{ animationDelay: (0.2 + index * 0.2) + 's' }"
+        >
+          <img :src="photo" />
+        </div>
       </div>
 
       <div class="front"></div>
@@ -22,14 +33,26 @@ export default {
   data() {
     return {
       isOpen: false,
-      message: localStorage.getItem('message') || 'Ich denke an dich 💖'
+      message: localStorage.getItem('message') || 'Ich denke an dich 💖',
+      photos: JSON.parse(localStorage.getItem('images') || '[]')
     }
   },
   methods: {
     toggleOpen() {
       this.isOpen = !this.isOpen
     }
+  },
+  computed: {
+  finalPhotos() {
+    if (this.photos.length > 0) return this.photos
+
+    return [
+      'https://picsum.photos/100?1',
+      'https://picsum.photos/100?2',
+      'https://picsum.photos/100?3'
+    ]
   }
+}
 }
 </script>
 
@@ -106,14 +129,81 @@ export default {
   z-index: 5; /* Brief kommt nach vorne */
 }
 
+.photos {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.photo {
+  position: absolute;
+  width: 90px;
+  height: 110px;
+  background: white;
+  padding: 6px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+  border-radius: 4px;
+  opacity: 0;
+  transform: translateY(40px) scale(0.8);
+}
+
+/* Bild drin */
+.photo img {
+  width: 100%;
+  height: 80%;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+.photo:nth-child(1) {
+  left: 0%;
+  top: 130%;
+}
+
+.photo:nth-child(2) {
+  left: 40%;
+  top: 120%;
+}
+
+.photo:nth-child(3) {
+  left: 80%;
+  top: 135%;
+}
+
 /* Animation */
+.envelope.open .photo {
+  animation: popPhoto 0.8s forwards;
+}
+
+@keyframes popPhoto {
+  0% {
+    opacity: 0;
+    transform: translateY(50px) scale(0.7) rotate(0deg);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-20px) scale(1.05) rotate(var(--rot));
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(-40px) scale(1) rotate(var(--rot));
+  }
+}
+
 @keyframes slideUp {
-  from {
-    transform: translateY(40px);
+  0% {
+    transform: translateY(60px) scale(0.95);
     opacity: 0;
   }
-  to {
-    transform: translateY(0);
+  60% {
+    transform: translateY(-10px) scale(1.02);
+  }
+  100% {
+    transform: translateY(0) scale(1);
     opacity: 1;
   }
 }
