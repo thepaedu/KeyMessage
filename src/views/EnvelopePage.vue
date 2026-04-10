@@ -7,7 +7,7 @@
       <div class="base"></div>
 
       <div class="letter" v-if="isOpen">
-        <p>{{ message }}</p>
+        <p class="message-text">{{ message }}</p>
       </div>
 
       <div class="photos" v-if="isOpen">
@@ -66,6 +66,14 @@ export default {
   padding: 40px;
   background: linear-gradient(to bottom, #ffe6f0, #fff);
   min-height: 100vh;
+}
+
+.message-text {
+  white-space: pre-line;
+  line-height: 1.5;
+  font-size: 14px;
+  text-align: left;
+  color: #444;
 }
 
 /* Container */

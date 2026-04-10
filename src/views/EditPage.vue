@@ -3,7 +3,16 @@
     <h3>Nachricht bearbeiten</h3>
 
     <div class="text-area-container">
-      <textarea v-model="message" rows="5" style="width:100%" />
+      <textarea 
+        v-model="message"
+        rows="5"
+        style="width:100%"
+        :maxlength="maxChars"
+      />
+
+      <p>
+        {{ message.length }} / {{ maxChars }} Zeichen
+      </p>
     </div>
   </div>
 
@@ -52,7 +61,16 @@ export default {
     return {
       message: localStorage.getItem('message') || '',
       images: JSON.parse(localStorage.getItem('images') || '[]'),
-      isLoadingImages: false
+      isLoadingImages: false,
+      maxChars: 600
+    }
+  },
+
+  watch: {
+    message(newVal) {
+      if (newVal.length > this.maxChars) {
+        this.message = newVal.slice(0, this.maxChars)
+      }
     }
   },
 
