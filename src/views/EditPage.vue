@@ -20,6 +20,8 @@
       :disabled="images.length >= 3"
     />
 
+    <p v-if="isLoadingImages">Bilder werden verarbeitet...</p>
+
     <div v-if="images.length" class="preview">
       <div v-for="(img, index) in images" :key="index" class="preview-img">
         
@@ -34,12 +36,14 @@
   </div>
 
   <div class="controlls-container">
-    <button @click="save">Speichern</button>
+    <button @click="save" :disabled="isLoadingImages">
+      {{ isLoadingImages ? 'Lade Bilder...' : 'Speichern' }}
+    </button>
+
     <router-link to="/">
       <button>Zurück</button>
     </router-link>
   </div>
-
 </template>
 
 <script>
@@ -47,32 +51,45 @@ export default {
   data() {
     return {
       message: localStorage.getItem('message') || '',
-      images: JSON.parse(localStorage.getItem('images') || '[]')
+      images: JSON.parse(localStorage.getItem('images') || '[]'),
+      isLoadingImages: false
     }
   },
+
   methods: {
-    handleImages(event) {
+    async handleImages(event) {
       const files = Array.from(event.target.files)
 
-      const combined = [...this.images, ...files]
-      const limited = combined.slice(0, 3)
+      if (!files.length) return
 
-      this.images = []
+      this.isLoadingImages = true
 
-      limited.forEach(file => {
-        if (typeof file === 'string') {
-          this.images.push(file)
-        } else {
-          const reader = new FileReader()
-          reader.onload = (e) => {
-            this.images.push(e.target.result)
-          }
-          reader.readAsDataURL(file)
-        }
-      })
+      const remainingSlots = 3 - this.images.length
 
-      if (combined.length > 3) {
-        alert('Es sind maximal 3 Bilder erlaubt.')
+      if (remainingSlots <= 0) {
+        alert('Maximal 3 Bilder erreicht.')
+        event.target.value = null
+        this.isLoadingImages = false
+        return
+      }
+
+      const filesToProcess = files.slice(0, remainingSlots)
+      const newImages = []
+
+      for (let file of filesToProcess) {
+        const compressed = await this.compressImage(file)
+        newImages.push(compressed)
+      }
+
+      this.images = [...this.images, ...newImages]
+
+      this.isLoadingImages = false
+
+      // 🔥 wichtig für iPhone
+      event.target.value = null
+
+      if (files.length > remainingSlots) {
+        alert('Nur die ersten ' + remainingSlots + ' Bilder wurden hinzugefügt.')
       }
     },
 
@@ -90,6 +107,42 @@ export default {
       }
 
       this.$router.push('/')
+    },
+
+    compressImage(file, maxWidth = 800, quality = 0.7) {
+      return new Promise((resolve) => {
+        const reader = new FileReader()
+
+        reader.onload = (event) => {
+          const img = new Image()
+
+          img.onload = () => {
+            const canvas = document.createElement('canvas')
+            const ctx = canvas.getContext('2d')
+
+            let width = img.width
+            let height = img.height
+
+            // Skalieren
+            if (width > maxWidth) {
+              height *= maxWidth / width
+              width = maxWidth
+            }
+
+            canvas.width = width
+            canvas.height = height
+
+            ctx.drawImage(img, 0, 0, width, height)
+
+            const compressed = canvas.toDataURL('image/jpeg', quality)
+            resolve(compressed)
+          }
+
+          img.src = event.target.result
+        }
+
+        reader.readAsDataURL(file)
+      })
     }
   }
 }
