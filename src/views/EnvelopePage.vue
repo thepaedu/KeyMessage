@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <h1 class="title">Message</h1>
+    <img :src="logo" alt="Logo" class="title-logo" />
 
     <div class="envelope" @click="toggleOpen" :class="{ open: isOpen }">
 
@@ -36,6 +36,8 @@
 
     </div>
 
+    <p v-if="!isOpen" class="click-hint">Zum Öffnen antippen</p>
+
     <teleport to="body">
       <transition name="fade">
         <div
@@ -59,6 +61,7 @@
 <script>
 import { getKeychain } from '../services/api.js'
 import PolaroidPhoto from '../components/PolaroidPhoto.vue'
+import logo from '../assets/logo.png'
 
 export default {
   components: {
@@ -72,7 +75,8 @@ export default {
       photos: [],
       photosOffset: 0,
       resizeObserver: null,
-      enlargedIndex: null
+      enlargedIndex: null,
+      logo
     }
   },
 
@@ -134,14 +138,15 @@ export default {
 </script>
 
 <style>
-.title {
-  color:  #eccba0;
+.title-logo {
+  height: 44px;
+  width: auto;
 }
 
 .page {
   text-align: center;
   padding: 40px;
-  background: linear-gradient(to bottom, #ffe6f0, #fff);
+  background: #f6efe4;
   min-height: 100vh;
 }
 
@@ -161,8 +166,40 @@ export default {
   position: relative;
   width: 320px;
   height: 220px;
-  margin: 60px auto;
+  margin: 60px auto 18px;
   perspective: 1200px;
+  cursor: pointer;
+  animation: envelopePulse 2.4s ease-in-out infinite;
+}
+
+.envelope.open {
+  animation: none;
+}
+
+@keyframes envelopePulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.035);
+  }
+}
+
+.click-hint {
+  margin: 0 0 40px;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  color: #8a7f6f;
+  animation: hintFade 1.8s ease-in-out infinite;
+}
+
+@keyframes hintFade {
+  0%, 100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 /* Base */
@@ -299,7 +336,7 @@ export default {
   }
 
   .envelope {
-    margin: 20px auto;
+    margin: 20px auto 18px;
     margin-top: 40%;
   }
 
